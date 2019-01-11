@@ -1,0 +1,65 @@
+1. spring 框架有哪些模块?
+　核心容器(beans, core, context, spel), aop, 工具, 消息, 数据访问/集成(jdbc, orm, oxm, jms, transactions), web(websocket, servlet, web, porlet)
+
+2. 什么是控制反转? 什么是依赖注入?
+  对象的生成不是通过new而是由容器生成, 并且由容器来控制bean的生命周期. 构造器注入, setter注入, 注解注入.
+
+  org.springframework.beans包和org.springframework.context包构成了spring框架ｉｏｃ的基础．
+  ApplicationContext接口对BeanFactory接口进行了扩展, 并在beanFactory基础上添加了其他功能, 比如与spring的aop更容易集成, 提拱了处理message resource的机制（国际化）,
+  事件传播和有应用层管理, web服务（webApplicationContext）
+
+3. BeanFactory和ApplicationContext的区别？
+   BeanFactory是bean集合的工厂类, 包含bean的定义, 以便在接收到请求的时候初始化bean, 同时包含了对bean生命周期的控制, 调用初始化方法(initialization method)和
+   销毁方法(destory method).
+   applicationContext继承了beanfactory接口, 同时还提供了其他服务.
+   1. 提供国际化支持的文本消息. 2. 统一的资源读取方式. 3. 事件传播和应用层管理. 4. web服务 5. 已在监听器中注册的bean事件.
+   classpathxmlapplication, filesystemxmlapplicaitoncontext, xmlwebapplicationcontext
+
+4. spring的配置方式?
+   1. xml配置 2. 注解配置 3. java配置(@Configuration, @Bean, 通过AnnotationConfigurationContext初始化)
+
+5. 比较重要的注解?
+   @Required, 需要设值　
+   @Autowired,
+   @Qualifier, 与autowired搭配来消除特定bean自动装配的奇异
+   @PostConstruct @PreDestroy
+
+6. spring bean的生命周期?
+   spring的初始化方法:
+     1. InitializinBean和DisposableBean回调接口.
+     2. Init Method和Destory Method
+     3. PostConstruct和PreDestroy注解方法
+
+7. spring bean的作用域?
+   1. singleton, 容器中只要一个实例．
+   2. prototype, 每次请求bean都会生成一个新的bean
+   3. request, 接收到网络请求之后, 会新生成一个bean, 请求结束之后会销毁
+   4. session, 保证每个seesion都有一个bean, 在session过期后会失效
+   5. global-sesion, 和portlet相关.当你的应用部署在protlet容器中时, 会包含很多protlet.如果你想要声明让所有的portlet共用全局的存储变量的话，那么这全局变量需要存储在global-session中.
+
+8. 什么是自动装配?自动装配的类别? Spring如何装配java collection？
+   1. 在Spring框架中，在配置文件中设定bean的依赖关系是一个很好的机制，Spring容器还可以自动装配合作关系bean之间的关联关系。
+   这意味着Spring可以通过向Bean Factory中注入的方式自动搞定bean之间的依赖关系。自动装配可以设置在每个bean上，也可以设定在特定的bean上。
+   下面的XML配置文件表明了如何根据名称将一个bean设置为自动装配：
+   <bean id="employeeDAO" class="com.howtodoinjava.EmployeeDAOImpl" autowire="byName" />
+   除了bean配置文件中提供的自动装配模式，还可以使用@Autowired注解来自动装配指定的bean。在使用@Autowired注解之前需要在按照如下的配置方式在Spring配置文件进行配置才可以使用。
+
+   <context:annotation-config />
+   也可以通过在配置文件中配置AutowiredAnnotationBeanPostProcessor 达到相同的效果。
+
+   <bean class ="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+   配置好以后就可以使用@Autowired来标注了。
+
+   @Autowired
+   public EmployeeDAOImpl ( EmployeeManager manager ) {
+       this.manager = manager;
+   }
+   2. no：这是Spring框架的默认设置，在该设置下自动装配是关闭的，开发者需要自行在bean定义中用标签明确的设置依赖关系。
+      byName：该选项可以根据bean名称设置依赖关系。当向一个bean中自动装配一个属性时，容器将根据bean的名称自动在在配置文件中查询一个匹配的bean。如果找到的话，就装配这个属性，如果没找到的话就报错。
+      byType：该选项可以根据bean类型设置依赖关系。当向一个bean中自动装配一个属性时，容器将根据bean的类型自动在在配置文件中查询一个匹配的bean。如果找到的话，就装配这个属性，如果没找到的话就报错。
+      constructor：造器的自动装配和byType模式类似，但是仅仅适用于与有构造器相同参数的bean，如果在容器中没有找到与构造器参数类型一致的bean，那么将会抛出异常。
+      autodetect：该模式自动探测使用构造器自动装配或者byType自动装配。首先，首先会尝试找合适的带参数的构造器，如果找到的话就是用构造器自动装配，如果在bean内部没有找到相应的构造器或者是无参构造器，容器就会自动选择byTpe的自动装配方式。
+
+   2. 提供４种标签来装配. <list> <set> <map 任何对象>和<props, 注入的键和值都是字符串>
+
+
